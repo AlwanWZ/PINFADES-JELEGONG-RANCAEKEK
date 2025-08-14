@@ -4,9 +4,10 @@ import { db } from "@/lib/firebase";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 
 // PUT /api/fasilitas/[id]
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+
+export async function PUT(req: NextRequest, context: { params: { id: string } }) {
   try {
-    const id = params.id;
+    const id = context.params.id;
     const data = await req.json();
     await updateDoc(doc(db, "fasilitas", id), data);
     return NextResponse.json({ success: true });
@@ -16,9 +17,10 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 }
 
 // DELETE /api/fasilitas/[id]
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+
+export async function DELETE(_req: NextRequest, context: { params: { id: string } }) {
   try {
-    const id = params.id;
+    const id = context.params.id;
     await deleteDoc(doc(db, "fasilitas", id));
     return NextResponse.json({ success: true });
   } catch (err) {
