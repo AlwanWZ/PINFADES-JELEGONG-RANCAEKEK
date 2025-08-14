@@ -4,7 +4,6 @@ import { db } from "@/lib/firebase";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 
 // PUT /api/fasilitas/[id]
-
 export async function PUT(req: NextRequest, context: { params: Record<string, string> }) {
   try {
     const id = context.params.id;
@@ -17,7 +16,6 @@ export async function PUT(req: NextRequest, context: { params: Record<string, st
 }
 
 // DELETE /api/fasilitas/[id]
-
 export async function DELETE(_req: NextRequest, context: { params: Record<string, string> }) {
   try {
     const id = context.params.id;
