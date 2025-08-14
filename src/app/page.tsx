@@ -16,8 +16,8 @@ const NavbarLanding = ({ isDark, toggleDarkMode, handleSmoothScroll }: NavbarLan
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-lg">PF</span>
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden">
+              <img src="/logo/logo.png" alt="Logo Desa Jelegong" className="object-contain w-10 h-10" />
             </div>
             <div>
               <h1 className={`font-bold text-xl ${isDark ? 'text-white' : 'text-gray-900'}`}>PinFaDes</h1>
@@ -516,8 +516,8 @@ export default function LandingPage() {
       {/* Profil Desa Section */}
       <section className="py-16 px-6" id="profil">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="w-24 h-24 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-8">
-            <span className="text-white font-bold text-3xl">JL</span>
+          <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8 overflow-hidden bg-transparent">
+            <img src="/logo/logo.png" alt="Logo Desa Jelegong" className="object-contain w-20 h-20" />
           </div>
           <h2 className={`text-4xl md:text-5xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
             Profil <span className="text-emerald-600">Desa Jelegong</span>
@@ -545,8 +545,8 @@ export default function LandingPage() {
           </div>
           {/* Info & Sosmed */}
           <div className="flex flex-col items-center justify-center py-2 px-1 sm:py-0 sm:px-0 mb-4 sm:mb-0">
-            <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-2 sm:mb-6 shadow-lg">
-              <span className="text-white font-bold text-2xl">PF</span>
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-2 sm:mb-6 shadow-lg overflow-hidden bg-transparent">
+              <img src="/logo/logo.png" alt="Logo Desa Jelegong" className="object-contain w-12 h-12" />
             </div>
             <h3 className={`text-lg sm:text-2xl font-bold mb-1 sm:mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}> 
               PinFaDes - Pinjam Fasilitas Desa
@@ -554,22 +554,7 @@ export default function LandingPage() {
             <p className={`mb-2 sm:mb-4 text-xs sm:text-base ${isDark ? 'text-gray-400' : 'text-gray-600'} text-center`}> 
               Melayani warga Desa Jelegong dengan sepenuh hati
             </p>
-            <div className="flex flex-row items-center justify-center space-x-4 sm:space-x-4 mb-3 sm:mb-6">
-              <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className={`p-2 sm:p-2.5 rounded-full transition-colors shadow ${isDark ? 'bg-gray-700 hover:bg-emerald-600 text-pink-400' : 'bg-gray-100 hover:bg-emerald-100 text-pink-600'}`}> 
-                <Instagram className="w-6 h-6 sm:w-7 sm:h-7" />
-              </a>
-              <a href="https://tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="TikTok" className={`p-2 sm:p-2.5 rounded-full transition-colors shadow ${isDark ? 'bg-gray-700 hover:bg-emerald-600 text-black' : 'bg-gray-100 hover:bg-emerald-100 text-black'}`}> 
-                {/* TikTok SVG icon - new, more recognizable */}
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" className="w-6 h-6 sm:w-7 sm:h-7" fill="none">
-                  <g>
-                    <path d="M176 32c0 26.51 21.49 48 48 48v32c-22.09 0-42.09-8.95-56.57-23.43A79.91 79.91 0 0 1 176 32h-32v144a48 48 0 1 1-48-48h8v32h-8a16 16 0 1 0 16 16V32h32c0 35.35 28.65 64 64 64V32h-32Z" fill="currentColor"/>
-                  </g>
-                </svg>
-              </a>
-              <a href="https://youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className={`p-2 sm:p-2.5 rounded-full transition-colors shadow ${isDark ? 'bg-gray-700 hover:bg-emerald-600 text-red-500' : 'bg-gray-100 hover:bg-emerald-100 text-red-600'}`}> 
-                <Youtube className="w-6 h-6 sm:w-7 sm:h-7" />
-              </a>
-            </div>
+            {/* Sosmed dihapus sesuai permintaan */}
             <div className={`text-xs sm:text-sm ${isDark ? 'text-gray-500' : 'text-gray-500'} mt-1 sm:mt-0 text-center`}> 
               &copy; {new Date().getFullYear()} Desa Jelegong. All rights reserved.
             </div>

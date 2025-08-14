@@ -30,9 +30,14 @@ export default function NavbarLanding() {
       ref={navRef}
       className="navbar p-4 flex justify-between items-center shadow-md rounded-b-xl border-b border-cyan-100 sticky top-0 z-20 transition-all"
     >
-      <div className="flex items-center gap-2">
-        <Image src="/images/logo-jelegong.png" alt="Logo Desa" width={40} height={40} />
-        <h1 className="text-xl font-extrabold tracking-wide text-cyan-100 drop-shadow animate-fadein">Desa Jelegong</h1>
+      <div className="flex items-center space-x-3">
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md overflow-hidden bg-white">
+          <img src="/logo/logo.png" alt="Logo Desa Jelegong" className="object-contain w-9 h-9" />
+        </div>
+        <div className="flex flex-col">
+          <span className="font-bold text-xl tracking-tight text-cyan-100">Desa Jelegong</span>
+          <span className="text-xs font-medium text-cyan-300">Portal Warga</span>
+        </div>
       </div>
       <nav className="hidden md:flex gap-6">
         <Link href="/" className="hover:text-cyan-300 font-bold transition-colors text-cyan-100">Beranda</Link>

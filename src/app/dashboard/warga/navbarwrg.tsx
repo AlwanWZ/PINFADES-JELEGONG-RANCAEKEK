@@ -18,12 +18,44 @@ interface NavbarWargaProps {
   setDarkMode?: (val: boolean) => void;
 }
 
+
 export default function NavbarWarga({ darkMode = false, setDarkMode }: NavbarWargaProps) {
   const router = useRouter();
   const [logoutLoading, setLogoutLoading] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [notifications, setNotifications] = useState(3); // Example notification count
+  const [notifications, setNotifications] = useState(0);
+  const [uid, setUid] = useState<string | null>(null);
+
+  // Ambil uid dari localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUid = localStorage.getItem("uid");
+      setUid(storedUid && storedUid.trim() !== '' ? storedUid : null);
+    }
+  }, []);
+
+  // Fetch jumlah notifikasi user
+  useEffect(() => {
+    if (!uid) {
+      setNotifications(0);
+      return;
+    }
+    const fetchNotif = async () => {
+      try {
+        const res = await fetch(`/api/notifikasi?uid=${uid}`);
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data)) {
+          setNotifications(json.data.length);
+        } else {
+          setNotifications(0);
+        }
+      } catch {
+        setNotifications(0);
+      }
+    };
+    fetchNotif();
+  }, [uid]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,8 +90,8 @@ export default function NavbarWarga({ darkMode = false, setDarkMode }: NavbarWar
           <div className="flex items-center justify-between h-16">
             {/* Logo & Brand */}
             <div className="flex items-center space-x-3">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-md ${darkMode ? 'bg-gradient-to-br from-cyan-700 to-cyan-900' : 'bg-gradient-to-br from-cyan-400 to-cyan-600'}`}>
-                <span className="text-white font-bold text-lg">DJ</span>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md overflow-hidden">
+                <img src="/logo/logo.png" alt="Logo Desa Jelegong" className="object-contain w-9 h-9" />
               </div>
               <div className="flex flex-col">
                 <span className={`font-bold text-xl tracking-tight ${darkMode ? 'text-cyan-100' : 'text-cyan-900'}`}>Desa Jelegong</span>

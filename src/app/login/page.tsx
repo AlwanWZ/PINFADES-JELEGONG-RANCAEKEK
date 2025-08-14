@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
 import { signInWithPopup, signInWithEmailAndPassword } from "firebase/auth";
-import { auth, googleProvider } from "../../firebase";
+import { auth, googleProvider, db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { Sun, Moon, Eye, EyeOff, User, Lock, Mail } from "lucide-react";
 import Link from "next/link";
@@ -22,8 +23,29 @@ export default function LoginPage() {
     setError("");
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      // If login success, redirect to dashboard warga (or check custom claims/role if needed)
-      router.push("/dashboard/warga");
+      const user = userCredential.user;
+      // Simpan uid ke localStorage agar dashboard bisa akses
+      if (typeof window !== "undefined") {
+        localStorage.setItem("uid", user.uid);
+      }
+      // Kirim data user ke API agar tersimpan di Firestore
+      await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          uid: user.uid,
+          email: user.email,
+          username: user.displayName || user.email?.split("@") [0] || "User"
+        })
+      });
+      // Ambil data user dari Firestore untuk cek role
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      const userData = userDoc.exists() ? userDoc.data() : null;
+      if (userData && userData.role === "admin") {
+        router.push("/dashboard/admin");
+      } else {
+        router.push("/dashboard/warga");
+      }
     } catch (err: any) {
       if (err.code === "auth/user-not-found") {
         window.alert("Akun tidak ditemukan. Silakan registrasi terlebih dahulu.");
@@ -32,6 +54,8 @@ export default function LoginPage() {
         setError("Password salah.");
       } else if (err.code === "auth/invalid-email") {
         setError("Format email tidak valid.");
+      } else if (err.code === "auth/too-many-requests") {
+        setError("Terlalu banyak percobaan login. Silakan coba lagi nanti.");
       } else {
         setError("Gagal login. Silakan coba lagi.");
       }
@@ -45,7 +69,29 @@ export default function LoginPage() {
     setError("");
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      router.push("/dashboard/warga");
+      const user = result.user;
+      // Simpan uid ke localStorage agar dashboard bisa akses
+      if (typeof window !== "undefined") {
+        localStorage.setItem("uid", user.uid);
+      }
+      // Kirim data user ke API agar tersimpan di Firestore
+      await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          uid: user.uid,
+          email: user.email,
+          username: user.displayName || user.email?.split("@") [0] || "User"
+        })
+      });
+      // Ambil data user dari Firestore untuk cek role
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      const userData = userDoc.exists() ? userDoc.data() : null;
+      if (userData && userData.role === "admin") {
+        router.push("/dashboard/admin");
+      } else {
+        router.push("/dashboard/warga");
+      }
     } catch (err: any) {
       setError("Gagal login dengan Google. Silakan coba lagi.");
     }
@@ -64,17 +110,18 @@ export default function LoginPage() {
       </div>
       <div className={`w-full max-w-md p-8 rounded-3xl shadow-2xl ${isDark ? "bg-gray-800" : "bg-white"}`}>
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-4">
-            <span className="text-white font-bold text-2xl">PF</span>
+          <div className="w-16 h-16 flex items-center justify-center mb-4">
+            <img
+              src="/logo/logo.png"
+              alt="Logo Desa Jelegong"
+              className="w-16 h-16 object-contain"
+              style={{ background: 'none' }}
+            />
           </div>
           <h2 className={`text-3xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>Login</h2>
           <p className={`text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>Masuk untuk melanjutkan</p>
         </div>
-        <div className={`mb-6 p-4 rounded-xl border text-sm ${isDark ? 'bg-gray-900 border-cyan-800 text-cyan-200' : 'bg-cyan-50 border-cyan-200 text-cyan-900'}`}>
-          <div className="font-bold mb-1">Akun Dummy:</div>
-          <div><span className="font-semibold">Admin</span>: <span className="font-mono">admin</span> / <span className="font-mono">admin123</span></div>
-          <div><span className="font-semibold">User</span>: <span className="font-mono">user</span> / <span className="font-mono">user123</span></div>
-        </div>
+
         <form onSubmit={handleLogin}>
           <div className="mb-4">
             <label className={`block mb-1 font-medium ${isDark ? "text-gray-300" : "text-gray-700"}`}>Email</label>
@@ -106,6 +153,8 @@ export default function LoginPage() {
                 className="absolute right-10 top-3 text-cyan-500"
                 onClick={() => setShowPassword(!showPassword)}
                 tabIndex={-1}
+                aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+                disabled={loading}
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>

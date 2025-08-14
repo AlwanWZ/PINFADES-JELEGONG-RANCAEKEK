@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-import { signInWithPopup } from "firebase/auth";
-import { auth, googleProvider } from "../../firebase";
+import { signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, googleProvider } from "@/lib/firebase";
 import { Eye, EyeOff, User, Lock, Mail, Sun, Moon } from "lucide-react";
 import Link from "next/link";
 
@@ -30,7 +30,7 @@ export default function RegisPage() {
     setLoading(false);
   };
 
-  const handleRegis = (e: React.FormEvent) => {
+  const handleRegis = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -39,10 +39,28 @@ export default function RegisPage() {
       return;
     }
     setLoading(true);
-    setTimeout(() => {
-      setSuccess("Registrasi berhasil! Silakan login.");
-      setLoading(false);
-    }, 1000);
+    try {
+      // Register user ke Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      // Simpan data user ke Firestore via API
+      await fetch("/api/regis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          uid: user.uid,
+          email: user.email,
+          username: username
+        })
+      });
+      setSuccess("Registrasi berhasil! Redirect ke dashboard...");
+      setTimeout(() => {
+        window.location.href = "/dashboard/warga";
+      }, 1000);
+    } catch (err: any) {
+      setError(err.message || "Gagal registrasi. Silakan coba lagi.");
+    }
+    setLoading(false);
   };
 
   return (
@@ -58,8 +76,13 @@ export default function RegisPage() {
       </div>
       <div className={`w-full max-w-md p-8 rounded-3xl shadow-2xl ${isDark ? "bg-gray-800" : "bg-white"}`}>
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-4">
-            <span className="text-white font-bold text-2xl">PF</span>
+          <div className="w-16 h-16 flex items-center justify-center mb-4">
+            <img
+              src="/logo/logo.png"
+              alt="Logo Desa Jelegong"
+              className="w-16 h-16 object-contain"
+              style={{ background: 'none' }}
+            />
           </div>
           <h2 className={`text-3xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>Registrasi</h2>
           <p className={`text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>Buat akun baru</p>
