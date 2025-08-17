@@ -177,7 +177,7 @@ export default function LandingPage() {
               <div className="flex items-center space-x-6">
                 <div className="flex items-center">
                   <Users className="w-5 h-5 text-emerald-600 mr-2" />
-                  <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>1000+ Warga Aktif</span>
+                  <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>500+ Warga Aktif</span>
                 </div>
                 <div className="flex items-center">
                   <Shield className="w-5 h-5 text-cyan-600 mr-2" />
