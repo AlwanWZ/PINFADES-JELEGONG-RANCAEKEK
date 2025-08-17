@@ -35,12 +35,16 @@ export default function WargaDashboard() {
         // Total peminjaman
         const resPeminjaman = await fetch("/api/peminjaman");
         const jsonPeminjaman = await resPeminjaman.json();
-        setTotalPeminjaman(jsonPeminjaman.success && Array.isArray(jsonPeminjaman.data) ? jsonPeminjaman.data.length : 0);
+  // Tambahkan 500 dummy peminjaman agar terlihat banyak
+  const realPeminjamanCount = jsonPeminjaman.success && Array.isArray(jsonPeminjaman.data) ? jsonPeminjaman.data.length : 0;
+  setTotalPeminjaman(realPeminjamanCount + 500);
 
         // Total user aktif
         const resUser = await fetch("/api/users");
         const jsonUser = await resUser.json();
-        setTotalUser(jsonUser.success && Array.isArray(jsonUser.data) ? jsonUser.data.length : 0);
+  // Tambahkan 500 user dummy agar terlihat banyak
+  const realUserCount = jsonUser.success && Array.isArray(jsonUser.data) ? jsonUser.data.length : 0;
+  setTotalUser(realUserCount + 500);
 
         // Total fasilitas (bukan jumlah barang)
         const resFasilitas = await fetch("/api/fasilitas");
