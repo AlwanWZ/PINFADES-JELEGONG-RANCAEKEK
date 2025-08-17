@@ -276,7 +276,7 @@ export default function FasilitasAdminPage() {
                         <td className="py-2 px-4 text-center">
                           <div>Total: {item.jumlahTotal?.toLocaleString?.() ?? '-'}</div>
                           <div>Dipinjam: {item.jumlahDipinjam?.toLocaleString?.() ?? '-'}</div>
-                          <div className="font-bold text-green-500">Tersedia: {(item.jumlahTotal && item.jumlahDipinjam != null) ? (item.jumlahTotal - item.jumlahDipinjam).toLocaleString() : '-'}</div>
+                          <div className="font-bold text-green-500">Tersedia: {(typeof item.jumlahTotal === 'number' && typeof item.jumlahDipinjam === 'number') ? Math.max(0, item.jumlahTotal - item.jumlahDipinjam).toLocaleString() : '-'}</div>
                         </td>
                         <td className="py-2 px-4 text-xs">{item.createdAt ? new Date(item.createdAt).toLocaleString() : '-'}</td>
                         <td className="py-2 px-4 flex gap-2 justify-center">
