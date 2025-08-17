@@ -21,8 +21,21 @@ export default function RegisPage() {
     setError("");
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      // You can check result.user, result.user.email, etc.
-      // For demo, redirect all Google users to warga dashboard
+      const user = result.user;
+      // Simpan UID ke localStorage agar bisa digunakan di dashboard
+      if (typeof window !== "undefined" && user.uid) {
+        localStorage.setItem("uid", user.uid);
+      }
+      // Simpan data user ke Firestore via API agar muncul di tabel users
+      await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          uid: user.uid,
+          email: user.email,
+          username: user.displayName || "GoogleUser"
+        })
+      });
       window.location.href = "/dashboard/warga";
     } catch (err: any) {
       setError("Gagal daftar/login dengan Google. Silakan coba lagi.");
@@ -43,6 +56,10 @@ export default function RegisPage() {
       // Register user ke Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+      // Simpan UID ke localStorage agar bisa digunakan di dashboard
+      if (typeof window !== "undefined" && user.uid) {
+        localStorage.setItem("uid", user.uid);
+      }
       // Simpan data user ke Firestore via API
       await fetch("/api/regis", {
         method: "POST",
