@@ -96,9 +96,9 @@ export default function AjukanPinjamPage() {
     setModalOpen(true);
   };
 
-  // Hitung jumlah tersedia
+  // Hitung jumlah tersedia: jumlahTotal - jumlahDipinjam
   const jumlahTersedia = selectedBarang ?
-    Math.max(0, (selectedBarang.jumlahTotal || 0) - (selectedBarang.jumlahDipinjam || 0)) : 0;
+    Math.max(0, (typeof selectedBarang.jumlahTotal === 'number' ? selectedBarang.jumlahTotal : 0) - (typeof selectedBarang.jumlahDipinjam === 'number' ? selectedBarang.jumlahDipinjam : 0)) : 0;
 
   // Handle input
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -304,23 +304,23 @@ export default function AjukanPinjamPage() {
               )}
               {barangList.map((barang: any) => {
                 const tipe = getTipeFasilitas(barang);
-                // Cek apakah barang ini sedang dipakai hari ini (ada peminjaman disetujui dan tanggal overlap hari ini)
+                // Hitung jumlah barang yang sedang dipakai hari ini
                 const today = new Date();
-                const isDipakaiHariIni = peminjamanAktif.some((p) => {
-                  // Cek id barang
+                let jumlahDipakaiHariIni = 0;
+                peminjamanAktif.forEach((p) => {
                   const idMatch = (p.barangId && barang.id && p.barangId === barang.id) || (p.namaBarang && barang.nama && p.namaBarang === barang.nama);
-                  if (!idMatch) return false;
-                  // Cek tanggal pinjam dan kembali
+                  if (!idMatch) return;
                   let tglPinjam = p.tanggalPinjam;
                   let tglKembali = p.tanggalKembali;
-                  // Firestore Timestamp
                   if (tglPinjam && tglPinjam.seconds) tglPinjam = new Date(tglPinjam.seconds * 1000);
                   else if (typeof tglPinjam === "string") tglPinjam = new Date(tglPinjam);
                   if (tglKembali && tglKembali.seconds) tglKembali = new Date(tglKembali.seconds * 1000);
                   else if (typeof tglKembali === "string") tglKembali = new Date(tglKembali);
-                  // Cek overlap hari ini
-                  return tglPinjam && tglKembali && tglPinjam <= today && today <= tglKembali;
+                  if (tglPinjam && tglKembali && tglPinjam <= today && today <= tglKembali) {
+                    jumlahDipakaiHariIni += Number(p.jumlah) || 1;
+                  }
                 });
+                const jumlahTersediaHariIni = (barang.jumlahTotal || 0) - jumlahDipakaiHariIni;
                 return (
                   <div key={barang.id || barang.nama} className={`rounded-xl sm:rounded-2xl shadow-xl p-3 sm:p-6 flex flex-col items-center border-l-8
                     ${darkMode
@@ -335,12 +335,12 @@ export default function AjukanPinjamPage() {
                     {barang.deskripsi && (
                       <div className={`text-[10px] sm:text-xs mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{barang.deskripsi}</div>
                     )}
-                    {isDipakaiHariIni && (
+                    {jumlahTersediaHariIni === 0 && (
                       <div className={`text-xs font-bold mb-1 ${darkMode ? 'text-red-300' : 'text-red-600'}`}>Dipakai hari ini, silakan booking untuk besok</div>
                     )}
                     <button onClick={() => handleAjukan({ ...barang, tipe })} className={`mt-1 sm:mt-2 px-3 sm:px-6 py-1.5 sm:py-2 rounded-xl font-bold shadow flex items-center gap-2 transition text-xs sm:text-base
                       ${darkMode ? 'bg-gradient-to-r from-cyan-700 to-emerald-700 text-white hover:from-cyan-600 hover:to-emerald-800' : 'bg-cyan-600 text-white hover:bg-cyan-700'}`}
-                      disabled={isDipakaiHariIni}
+                      disabled={jumlahTersediaHariIni === 0}
                     >
                       <FaPlusCircle /> Ajukan
                     </button>
