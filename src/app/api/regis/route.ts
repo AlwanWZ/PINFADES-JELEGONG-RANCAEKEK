@@ -11,6 +11,7 @@ export async function POST(req: NextRequest) {
     }
     // Simpan user ke Firestore (collection: users, docId: uid)
     await setDoc(doc(db, "users", uid), {
+      uid,
       email,
       username,
       role: "warga",
